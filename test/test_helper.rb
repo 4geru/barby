@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rubygems'
 require 'barby'
 require 'minitest/autorun'
@@ -5,7 +7,6 @@ require 'minitest/spec'
 
 module Barby
   class TestCase < MiniTest::Spec
-
     include Barby
 
     private

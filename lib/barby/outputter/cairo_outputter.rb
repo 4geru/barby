@@ -1,9 +1,10 @@
+# frozen_string_literal: true
+
 require 'barby/outputter'
 require 'cairo'
 require 'stringio'
 
 module Barby
-
   # Uses Cairo to render a barcode to a number of formats: PNG, PS, EPS, PDF and SVG
   #
   # Registers methods render_to_cairo_context, to_png, to_ps, to_eps, to_pdf and to_svg
@@ -16,7 +17,6 @@ module Barby
   #   * foreground       - Cairo::Color::Base or Cairo::Color.parse(value)
   #   * background       - ^
   class CairoOutputter < Outputter
-
     register :render_to_cairo_context
     register :to_png
 
@@ -30,16 +30,15 @@ module Barby
 
     attr_writer :x, :y, :xdim, :height, :margin
 
-
     def initialize(*)
       super
       @x, @y, @xdim, @height, @margin = nil
     end
 
-    #Render the barcode onto a Cairo context
-    def render_to_cairo_context(context, options={})
-      if context.respond_to?(:have_current_point?) and
-          context.have_current_point?
+    # Render the barcode onto a Cairo context
+    def render_to_cairo_context(context, options = {})
+      if context.respond_to?(:have_current_point?) &&
+         context.have_current_point?
         current_x, current_y = context.current_point
       else
         current_x = x(options) || margin(options)
@@ -54,7 +53,7 @@ module Barby
         context.fill do
           if barcode.two_dimensional?
             boolean_groups.each do |groups|
-              groups.each do |bar,amount|
+              groups.each do |bar, amount|
                 current_width = _xdim * amount
                 if bar
                   context.rectangle(current_x, current_y, current_width, _xdim)
@@ -65,7 +64,7 @@ module Barby
               current_y += _xdim
             end
           else
-            boolean_groups.each do |bar,amount|
+            boolean_groups.each do |bar, amount|
               current_width = _xdim * amount
               if bar
                 context.rectangle(current_x, current_y, current_width, _height)
@@ -79,9 +78,8 @@ module Barby
       context
     end
 
-
-    #Render the barcode to a PNG image
-    def to_png(options={})
+    # Render the barcode to a PNG image
+    def to_png(options = {})
       output_to_string_io do |io|
         Cairo::ImageSurface.new(options[:format],
                                 full_width(options),
@@ -92,9 +90,8 @@ module Barby
       end
     end
 
-
-    #Render the barcode to a PS document
-    def to_ps(options={})
+    # Render the barcode to a PS document
+    def to_ps(options = {})
       output_to_string_io do |io|
         Cairo::PSSurface.new(io,
                              full_width(options),
@@ -105,15 +102,13 @@ module Barby
       end
     end
 
-
-    #Render the barcode to an EPS document
-    def to_eps(options={})
-      to_ps(options.merge(:eps => true))
+    # Render the barcode to an EPS document
+    def to_eps(options = {})
+      to_ps(options.merge(eps: true))
     end
 
-
-    #Render the barcode to a PDF document
-    def to_pdf(options={})
+    # Render the barcode to a PDF document
+    def to_pdf(options = {})
       output_to_string_io do |io|
         Cairo::PDFSurface.new(io,
                               full_width(options),
@@ -123,9 +118,8 @@ module Barby
       end
     end
 
-
-    #Render the barcode to an SVG document
-    def to_svg(options={})
+    # Render the barcode to an SVG document
+    def to_svg(options = {})
       output_to_string_io do |io|
         Cairo::SVGSurface.new(io,
                               full_width(options),
@@ -135,20 +129,19 @@ module Barby
       end
     end
 
-
-    def x(options={})
+    def x(options = {})
       @x || options[:x]
     end
 
-    def y(options={})
+    def y(options = {})
       @y || options[:y]
     end
 
-    def width(options={})
+    def width(options = {})
       (barcode.two_dimensional? ? encoding.first.length : encoding.length) * xdim(options)
     end
 
-    def height(options={})
+    def height(options = {})
       if barcode.two_dimensional?
         encoding.size * xdim(options)
       else
@@ -156,24 +149,23 @@ module Barby
       end
     end
 
-    def full_width(options={})
+    def full_width(options = {})
       width(options) + (margin(options) * 2)
     end
 
-    def full_height(options={})
+    def full_height(options = {})
       height(options) + (margin(options) * 2)
     end
 
-    def xdim(options={})
+    def xdim(options = {})
       @xdim || options[:xdim] || 1
     end
 
-    def margin(options={})
+    def margin(options = {})
       @margin || options[:margin] || 10
     end
 
-
-  private
+    private
 
     def output_to_string_io
       io = StringIO.new
@@ -181,7 +173,6 @@ module Barby
       io.rewind
       io.read
     end
-
 
     def render(surface, options)
       context = Cairo::Context.new(surface)
@@ -191,8 +182,5 @@ module Barby
       render_to_cairo_context(context, options)
       context
     end
-
-
   end
-
 end

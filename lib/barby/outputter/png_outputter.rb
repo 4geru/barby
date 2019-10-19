@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require 'barby/outputter'
 require 'chunky_png'
 
 module Barby
-
   # Renders the barcode to a PNG image using chunky_png (gem install chunky_png)
   #
   # Registers the to_png, to_datastream and to_canvas methods
@@ -17,25 +18,24 @@ module Barby
   #   * background:   Background color (see ChunkyPNG::Color - can be HTML color name)  [white]
   #
   class PngOutputter < Outputter
-
     register :to_png, :to_image, :to_datastream
 
     attr_writer :xdim, :ydim, :height, :margin
 
-
-    #Creates a ChunkyPNG::Image object and renders the barcode on it
-    def to_image(opts={})
+    # Creates a ChunkyPNG::Image object and renders the barcode on it
+    def to_image(opts = {})
       with_options opts do
         canvas = ChunkyPNG::Image.new(full_width, full_height, background)
 
         if barcode.two_dimensional?
-          x, y = margin, margin
+          x = margin
+          y = margin
           booleans.each do |line|
             line.each do |bar|
               if bar
-                x.upto(x+(xdim-1)) do |xx|
-                  y.upto y+(ydim-1) do |yy|
-                    canvas[xx,yy] = foreground
+                x.upto(x + (xdim - 1)) do |xx|
+                  y.upto y + (ydim - 1) do |yy|
+                    canvas[xx, yy] = foreground
                   end
                 end
               end
@@ -45,12 +45,13 @@ module Barby
             x = margin
           end
         else
-          x, y = margin, margin
+          x = margin
+          y = margin
           booleans.each do |bar|
             if bar
-              x.upto(x+(xdim-1)) do |xx|
-                y.upto y+(height-1) do |yy|
-                  canvas[xx,yy] = foreground
+              x.upto(x + (xdim - 1)) do |xx|
+                y.upto y + (height - 1) do |yy|
+                  canvas[xx, yy] = foreground
                 end
               end
             end
@@ -62,8 +63,7 @@ module Barby
       end
     end
 
-
-    #Create a ChunkyPNG::Datastream containing the barcode image
+    # Create a ChunkyPNG::Datastream containing the barcode image
     #
     # :constraints - Value is passed on to ChunkyPNG::Image#to_datastream
     #                E.g. to_datastream(:constraints => {:color_mode => ChunkyPNG::COLOR_GRAYSCALE})
@@ -72,12 +72,10 @@ module Barby
       to_image(*a).to_datastream(*constraints)
     end
 
-
-    #Renders the barcode to a PNG image
+    # Renders the barcode to a PNG image
     def to_png(*a)
       to_datastream(*a).to_s
     end
-
 
     def width
       length * xdim
@@ -107,7 +105,6 @@ module Barby
       @margin || 10
     end
 
-
     def background=(c)
       @background = if c.is_a?(String) || c.is_a?(Symbol)
                       ChunkyPNG::Color.html_color(c.to_sym)
@@ -132,12 +129,8 @@ module Barby
       @foreground || ChunkyPNG::Color::BLACK
     end
 
-
     def length
       barcode.two_dimensional? ? encoding.first.length : encoding.length
     end
-
-
   end
-
 end

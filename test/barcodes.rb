@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'code_128_test'
 
 require 'code_25_test'
@@ -17,4 +19,4 @@ require 'upc_supplemental_test'
 require 'data_matrix_test'
 require 'qr_code_test'
 
-#require 'pdf_417_test'
+# require 'pdf_417_test'

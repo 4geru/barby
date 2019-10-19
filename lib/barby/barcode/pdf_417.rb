@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'barby/barcode'
 require 'java'
 require 'Pdf417lib'
@@ -6,28 +8,26 @@ import 'Pdf417lib'
 module Barby
   class Pdf417 < Barcode2D
     DEFAULT_OPTIONS = {
-      :options       => 0,
-      :y_height      => 3,
-      :aspect_ratio  => 0.5, 
-      :error_level   => 0,
-      :len_codewords => 0,
-      :code_rows     => 0,
-      :code_columns  => 0
-    }
+      options: 0,
+      y_height: 3,
+      aspect_ratio: 0.5,
+      error_level: 0,
+      len_codewords: 0,
+      code_rows: 0,
+      code_columns: 0
+    }.freeze
 
     # Creates a new Pdf417 barcode. The +options+ argument
     # can use the same keys as DEFAULT_OPTIONS. Please consult
     # the source code of Pdf417lib.java for details about values
     # that can be used.
-    def initialize(data, options={})
+    def initialize(data, options = {})
       @pdf417 = Java::Pdf417lib.new
       self.data = data
-      DEFAULT_OPTIONS.merge(options).each{|k,v| send("#{k}=", v) }
+      DEFAULT_OPTIONS.merge(options).each { |k, v| send("#{k}=", v) }
     end
 
-    def options=(options)
-      @options = options
-    end
+    attr_writer :options
 
     def y_height=(y_height)
       @pdf417.setYHeight(y_height)
@@ -58,17 +58,17 @@ module Barby
     end
 
     def encoding
-      @pdf417.paintCode()
+      @pdf417.paintCode
 
-      cols = (@pdf417.getBitColumns() - 1) / 8 + 1
+      cols = (@pdf417.getBitColumns - 1) / 8 + 1
       enc = []
       row = nil
       @pdf417.getOutBits.each_with_index do |byte, n|
-        if n%cols == 0
-          row = ""
+        if n % cols == 0
+          row = ''
           enc << row
         end
-        row << sprintf("%08b", (byte & 0xff) | 0x100)
+        row << format('%08b', (byte & 0xff) | 0x100)
       end
       enc
     end

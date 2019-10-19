@@ -1,24 +1,24 @@
+# frozen_string_literal: true
+
 require 'barby/outputter'
 require 'prawn'
 
 module Barby
-
   class PrawnOutputter < Outputter
-
     register :to_pdf, :annotate_pdf
 
     attr_writer :xdim, :ydim, :x, :y, :height, :margin, :unbleed, :color
 
-    def to_pdf(opts={})
+    def to_pdf(opts = {})
       doc_opts = opts.delete(:document) || {}
       doc_opts[:page_size] ||= 'A4'
       annotate_pdf(Prawn::Document.new(doc_opts), opts).render
     end
 
-
-    def annotate_pdf(pdf, opts={})
+    def annotate_pdf(pdf, opts = {})
       with_options opts do
-        xpos, ypos = x, y
+        xpos = x
+        ypos = y
         orig_xpos = xpos
         orig_color = pdf.fill_color
 
@@ -26,41 +26,39 @@ module Barby
 
         if barcode.two_dimensional?
           boolean_groups.reverse_each do |groups|
-            groups.each do |bar,amount|
+            groups.each do |bar, amount|
               if bar
-                pdf.move_to(xpos+unbleed, ypos+unbleed)
-                pdf.line_to(xpos+unbleed, ypos+ydim-unbleed)
-                pdf.line_to(xpos+(xdim*amount)-unbleed, ypos+ydim-unbleed)
-                pdf.line_to(xpos+(xdim*amount)-unbleed, ypos+unbleed)
-                pdf.line_to(xpos+unbleed, ypos+unbleed)
+                pdf.move_to(xpos + unbleed, ypos + unbleed)
+                pdf.line_to(xpos + unbleed, ypos + ydim - unbleed)
+                pdf.line_to(xpos + (xdim * amount) - unbleed, ypos + ydim - unbleed)
+                pdf.line_to(xpos + (xdim * amount) - unbleed, ypos + unbleed)
+                pdf.line_to(xpos + unbleed, ypos + unbleed)
                 pdf.fill
               end
-              xpos += (xdim*amount)
+              xpos += (xdim * amount)
             end
             xpos = orig_xpos
             ypos += ydim
           end
         else
-          boolean_groups.each do |bar,amount|
+          boolean_groups.each do |bar, amount|
             if bar
-              pdf.move_to(xpos+unbleed, ypos)
-              pdf.line_to(xpos+unbleed, ypos+height)
-              pdf.line_to(xpos+(xdim*amount)-unbleed, ypos+height)
-              pdf.line_to(xpos+(xdim*amount)-unbleed, ypos)
-              pdf.line_to(xpos+unbleed, ypos)
+              pdf.move_to(xpos + unbleed, ypos)
+              pdf.line_to(xpos + unbleed, ypos + height)
+              pdf.line_to(xpos + (xdim * amount) - unbleed, ypos + height)
+              pdf.line_to(xpos + (xdim * amount) - unbleed, ypos)
+              pdf.line_to(xpos + unbleed, ypos)
               pdf.fill
             end
-            xpos += (xdim*amount)
+            xpos += (xdim * amount)
           end
-        end#if
+        end # if
 
         pdf.fill_color = orig_color
-
-      end#with_options
+      end # with_options
 
       pdf
     end
-
 
     def length
       two_dimensional? ? encoding.first.length : encoding.length
@@ -82,9 +80,9 @@ module Barby
       height + (margin * 2)
     end
 
-    #Margin is used for x and y if not given explicitly, effectively placing the barcode
-    #<margin> points from the [left,bottom] of the page.
-    #If you define x and y, there will be no margin. And if you don't define margin, it's 0.
+    # Margin is used for x and y if not given explicitly, effectively placing the barcode
+    # <margin> points from the [left,bottom] of the page.
+    # If you define x and y, there will be no margin. And if you don't define margin, it's 0.
     def margin
       @margin || 0
     end
@@ -105,25 +103,19 @@ module Barby
       @ydim || xdim
     end
 
-    #Defines an amount to reduce black bars/squares by to account for "ink bleed"
-    #If xdim = 3, unbleed = 0.2, a single/width black bar will be 2.6 wide
-    #For 2D, both x and y dimensions are reduced.
+    # Defines an amount to reduce black bars/squares by to account for "ink bleed"
+    # If xdim = 3, unbleed = 0.2, a single/width black bar will be 2.6 wide
+    # For 2D, both x and y dimensions are reduced.
     def unbleed
       @unbleed || 0
     end
 
-    def color
-      @color
-    end
+    attr_reader :color
 
-
-  private
+    private
 
     def page_size(xdim, height, margin)
-      [width(xdim,margin), height(height,margin)]
+      [width(xdim, margin), height(height, margin)]
     end
-
-
   end
-
 end
