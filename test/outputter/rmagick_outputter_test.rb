@@ -52,7 +52,7 @@ class RmagickOutputterTest < Barby::TestCase
   it 'should have a full_width equal to the width + left and right margins' do
     @outputter.xdim.must_equal 1
     @outputter.margin.must_equal 10
-    @outputter.full_width.must_equal (@outputter.width + 10 + 10)
+    @outputter.full_width.must_equal(@outputter.width + 10 + 10)
   end
 
   it 'should have a default height of 100' do

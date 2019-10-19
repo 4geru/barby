@@ -14,7 +14,7 @@ module Barby
     # So we can register outputter during an full test suite run.
     def load_outputter(outputter)
       @loaded_outputter ||= load "barby/outputter/#{outputter}_outputter.rb"
-    rescue LoadError => e
+    rescue LoadError
       skip "#{outputter} not being installed properly"
     end
 

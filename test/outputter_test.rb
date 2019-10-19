@@ -110,10 +110,11 @@ class OutputterTest < Barby::TestCase
       @outputter.class_eval do
         def foo
           'foo'
-                             end; def my_bar
+        end
 
-                                    'bar'
-                                                  end
+        def my_bar
+          'bar'
+        end
       end
 
       @barcode = Barcode.new
@@ -128,10 +129,11 @@ class OutputterTest < Barby::TestCase
       @outputter.class_eval do
         def foo(*a)
           a
-                             end; def my_bar(*a)
+        end
 
-                                    a
-                                                  end
+        def my_bar(*a)
+          a
+        end
       end
 
       @barcode.foo(1, 2, 3).must_equal [1, 2, 3]
@@ -142,7 +144,7 @@ class OutputterTest < Barby::TestCase
       @outputter.class_eval do
         def foo(*a, &b)
           b.call(*a)
-                             end
+        end
       end
       @barcode.foo(1, 2, 3) { |*a| a }.must_equal [1, 2, 3]
     end

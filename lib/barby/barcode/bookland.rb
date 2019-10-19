@@ -55,7 +55,7 @@ module Barby
       end
 
       def isbn=(isbn)
-        if match = PATTERN.match(isbn.gsub(/\D/, ''))
+        if (match = PATTERN.match(isbn.gsub(/\D/, '')))
           @number = match[:number]
           @prefix = match[:prefix]
         else

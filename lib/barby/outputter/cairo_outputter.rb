@@ -45,8 +45,8 @@ module Barby
         current_y = y(options) || margin(options)
       end
 
-      _xdim = xdim(options)
-      _height = height(options)
+      xdim = xdim(options)
+      height = height(options)
       original_current_x = current_x
       context.save do
         context.set_source_color(options[:foreground] || :black)
@@ -54,20 +54,20 @@ module Barby
           if barcode.two_dimensional?
             boolean_groups.each do |groups|
               groups.each do |bar, amount|
-                current_width = _xdim * amount
+                current_width = xdim * amount
                 if bar
-                  context.rectangle(current_x, current_y, current_width, _xdim)
+                  context.rectangle(current_x, current_y, current_width, xdim)
                 end
                 current_x += current_width
               end
               current_x = original_current_x
-              current_y += _xdim
+              current_y += xdim
             end
           else
             boolean_groups.each do |bar, amount|
-              current_width = _xdim * amount
+              current_width = xdim * amount
               if bar
-                context.rectangle(current_x, current_y, current_width, _height)
+                context.rectangle(current_x, current_y, current_width, height)
               end
               current_x += current_width
             end

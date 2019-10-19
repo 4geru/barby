@@ -9,8 +9,6 @@ module Barby
   class PDFWriterOutputter < Outputter
     register :annotate_pdf
 
-    attr_accessor :x, :y, :height, :xdim
-
     # Annotate a PDFWriter document with the barcode
     #
     # Valid options are:
